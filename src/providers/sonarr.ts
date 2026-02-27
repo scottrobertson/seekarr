@@ -1,10 +1,14 @@
 import { ArrProvider } from "./base.js";
 import type { SearchCandidate } from "../types.js";
 
+interface SonarrSeries {
+  title: string;
+}
+
 interface SonarrEpisode {
   id: number;
   title: string;
-  seriesTitle?: string;
+  series?: SonarrSeries;
   seasonNumber: number;
   episodeNumber: number;
 }
@@ -24,7 +28,7 @@ export class SonarrProvider extends ArrProvider {
 
     while (true) {
       const monitored = this.config.monitoredOnly ? "true" : "false";
-      const params = `monitored=${monitored}&page=${page}&pageSize=${pageSize}&sortKey=airDateUtc&sortDirection=descending`;
+      const params = `includeSeries=true&monitored=${monitored}&page=${page}&pageSize=${pageSize}&sortKey=airDateUtc&sortDirection=descending`;
       const res = await this.api<SonarrPagedResponse>(
         `${endpoint}?${params}`
       );
@@ -40,7 +44,7 @@ export class SonarrProvider extends ArrProvider {
   }
 
   private formatEpisode(ep: SonarrEpisode): string {
-    const series = ep.seriesTitle ?? "Unknown";
+    const series = ep.series?.title ?? "Unknown";
     return `${series} - S${String(ep.seasonNumber).padStart(2, "0")}E${String(ep.episodeNumber).padStart(2, "0")}`;
   }
 
