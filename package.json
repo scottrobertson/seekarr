@@ -1,5 +1,5 @@
 {
-  "name": "upgradarr",
+  "name": "seekarr",
   "version": "1.0.0",
   "description": "Trigger manual searches in Sonarr/Radarr to find missing items and upgrade quality",
   "type": "module",

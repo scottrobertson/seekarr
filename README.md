@@ -1,4 +1,4 @@
-# Upgradarr
+# Seekarr
 
 A lightweight tool that triggers manual searches in Sonarr and Radarr to find missing items and upgrade existing ones to better quality. No UI, just a script that runs on a schedule in Docker. Configured via YAML.
 
@@ -18,14 +18,14 @@ A lightweight tool that triggers manual searches in Sonarr and Radarr to find mi
 
 ```yaml
 services:
-  upgradarr:
-    image: ghcr.io/scottrobertson/upgradarr:latest
+  seekarr:
+    image: ghcr.io/scottrobertson/seekarr:latest
     volumes:
-      - ./upgradarr:/app
+      - ./seekarr:/app
     restart: unless-stopped
 ```
 
-Place your `config.yml` at `./upgradarr/config/config.yml`. Search history data will be stored in `./upgradarr/data/`.
+Place your `config.yml` at `./seekarr/config/config.yml`. Search history data will be stored in `./seekarr/data/`.
 
 3. Start it:
 
@@ -102,8 +102,8 @@ Each run, per instance:
 
 Shuffling matters. The APIs return items in a consistent order, so without it the same items would be searched every run. Randomizing ensures everything gets a chance over time.
 
-Errors on one instance don't affect others. If an instance is unreachable, Upgradarr logs the error and moves on to the next one.
+Errors on one instance don't affect others. If an instance is unreachable, Seekarr logs the error and moves on to the next one.
 
 ## Data Storage
 
-When `searchFrequencyHours` is enabled, Upgradarr stores search history as JSON files in the data directory (one file per instance). In Docker this is `/app/data/`, controlled by the `DATA_PATH` environment variable.
+When `searchFrequencyHours` is enabled, Seekarr stores search history as JSON files in the data directory (one file per instance). In Docker this is `/app/data/`, controlled by the `DATA_PATH` environment variable.

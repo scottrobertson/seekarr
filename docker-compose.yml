@@ -1,7 +1,7 @@
 services:
-  upgradarr:
+  seekarr:
     build: .
-    image: ghcr.io/scottrobertson/upgradarr:latest
+    image: ghcr.io/scottrobertson/seekarr:latest
     volumes:
-      - ./upgradarr:/app
+      - ./seekarr:/app
     restart: unless-stopped
