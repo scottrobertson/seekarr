@@ -7,7 +7,7 @@ instances:
     monitoredOnly: true         # only search monitored items
     limit: 10                   # max items to search per run
     dryRun: false               # log what would be searched without triggering searches
-    searchFrequencyHours: 0     # skip items searched within this many hours (0 = disabled)
+    searchFrequencyHours: 1     # skip items searched within this many hours
 
   - name: "radarr-main"
     type: "radarr"

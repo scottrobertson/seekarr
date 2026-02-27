@@ -6,7 +6,6 @@ A lightweight tool that triggers manual searches in Sonarr and Radarr to find mi
 
 - Searches for missing episodes/movies and quality upgrades
 - Supports multiple Sonarr/Radarr instances
-- Randomizes search order so different items get picked up across runs
 - Runs on a configurable schedule or once for external cron
 
 ## Quick Start
@@ -44,7 +43,7 @@ instances:
     monitoredOnly: true # only search monitored items
     limit: 10 # max items to search per run
     dryRun: false # log what would be searched without triggering searches
-    searchFrequencyHours: 24 # skip items searched within this many hours (0 = disabled)
+    searchFrequencyHours: 1 # skip items searched within this many hours
 
   - name: "radarr-main"
     type: "radarr"
@@ -68,7 +67,7 @@ schedule:
 | `monitoredOnly`      | `true`   | Only search monitored items                          |
 | `limit`              | `10`     | Max items to search per run                          |
 | `dryRun`             | `false`  | Log what would be searched without triggering searches |
-| `searchFrequencyHours` | `0`   | Skip items searched within this many hours. `0` disables (searches every run). |
+| `searchFrequencyHours` | `1`   | Skip items searched within this many hours                                     |
 | `intervalMinutes`    | `60`     | Minutes between runs. `0` runs once and exits.       |
 
 ## Running Without Docker
@@ -92,14 +91,12 @@ CONFIG_PATH=./config.yml DATA_PATH=./data npm run dev
 Each run, per instance:
 
 1. Fetches candidates from the API (missing items, quality upgrades, or both)
-2. Shuffles the list randomly
+2. Filters out recently searched items (if `searchFrequencyHours` is enabled)
 3. Takes the first `limit` items
 4. Sends a search command for the selected items
-
-Shuffling matters. The APIs return items in a consistent order, so without it the same items would be searched every run. Randomizing ensures everything gets a chance over time.
 
 Errors on one instance don't affect others. If an instance is unreachable, Seekarr logs the error and moves on to the next one.
 
 ## Data Storage
 
-When `searchFrequencyHours` is enabled, Seekarr stores search history as JSON files in the data directory (one file per instance). In Docker this is `/app/data/`, controlled by the `DATA_PATH` environment variable.
+Seekarr stores search history as JSON files in the data directory (one file per instance). This is how it tracks which items have been searched recently to avoid re-searching them. In Docker this is `/app/data/`, controlled by the `DATA_PATH` environment variable.

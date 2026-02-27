@@ -45,9 +45,7 @@ describe("ArrProvider.run()", () => {
   let provider: TestProvider;
 
   beforeEach(() => {
-    provider = new TestProvider(makeConfig());
-    // Prevent shuffle from randomizing order in tests
-    vi.spyOn(Math, "random").mockReturnValue(0);
+    provider = new TestProvider(makeConfig(), makeHistory());
   });
 
   it("calls search() with candidate IDs", async () => {
@@ -64,8 +62,7 @@ describe("ArrProvider.run()", () => {
   });
 
   it("respects limit (only searches up to the limit)", async () => {
-    provider = new TestProvider(makeConfig({ limit: 2 }));
-    vi.spyOn(Math, "random").mockReturnValue(0);
+    provider = new TestProvider(makeConfig({ limit: 2 }), makeHistory());
     provider.candidateResult = [
       { id: 1, title: "A", type: "missing" },
       { id: 2, title: "B", type: "missing" },
@@ -80,7 +77,7 @@ describe("ArrProvider.run()", () => {
   });
 
   it("dry run mode logs but does not call search()", async () => {
-    provider = new TestProvider(makeConfig({ dryRun: true }));
+    provider = new TestProvider(makeConfig({ dryRun: true }), makeHistory());
     provider.candidateResult = [
       { id: 1, title: "A", type: "missing" },
     ];
@@ -90,10 +87,9 @@ describe("ArrProvider.run()", () => {
     expect(provider.searchCalls).toHaveLength(0);
   });
 
-  it("skips recently searched items when search history is provided", async () => {
+  it("skips recently searched items", async () => {
     const history = makeHistory([1]);
     provider = new TestProvider(makeConfig(), history);
-    vi.spyOn(Math, "random").mockReturnValue(0);
     provider.candidateResult = [
       { id: 1, title: "Recently Searched", type: "missing" },
       { id: 2, title: "Not Searched", type: "missing" },
@@ -109,7 +105,6 @@ describe("ArrProvider.run()", () => {
   it("records searched IDs to history after searching", async () => {
     const history = makeHistory();
     provider = new TestProvider(makeConfig(), history);
-    vi.spyOn(Math, "random").mockReturnValue(0);
     provider.candidateResult = [
       { id: 5, title: "Movie", type: "missing" },
     ];

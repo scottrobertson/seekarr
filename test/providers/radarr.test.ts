@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { RadarrProvider } from "../../src/providers/radarr.js";
 import type { InstanceConfig } from "../../src/types.js";
+import type { SearchHistoryStore } from "../../src/search-history.js";
 
 function makeConfig(overrides: Partial<InstanceConfig> = {}): InstanceConfig {
   return {
@@ -17,12 +18,16 @@ function makeConfig(overrides: Partial<InstanceConfig> = {}): InstanceConfig {
   };
 }
 
+function makeHistory(): SearchHistoryStore {
+  return { filterRecent: vi.fn(() => []), record: vi.fn(), save: vi.fn() };
+}
+
 describe("RadarrProvider.getCandidates()", () => {
   let provider: RadarrProvider;
   let apiSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    provider = new RadarrProvider(makeConfig());
+    provider = new RadarrProvider(makeConfig(), makeHistory());
     apiSpy = vi
       .spyOn(provider as any, "api")
       .mockResolvedValue([]);
@@ -59,7 +64,7 @@ describe("RadarrProvider.getCandidates()", () => {
   });
 
   it('respects searchMode: "missing" (no upgrades returned)', async () => {
-    provider = new RadarrProvider(makeConfig({ searchMode: "missing" }));
+    provider = new RadarrProvider(makeConfig({ searchMode: "missing" }), makeHistory());
     apiSpy = vi.spyOn(provider as any, "api").mockResolvedValue([
       { id: 1, title: "Missing", monitored: true, hasFile: false },
       {
@@ -79,7 +84,7 @@ describe("RadarrProvider.getCandidates()", () => {
   });
 
   it('respects searchMode: "upgrades" (no missing returned)', async () => {
-    provider = new RadarrProvider(makeConfig({ searchMode: "upgrades" }));
+    provider = new RadarrProvider(makeConfig({ searchMode: "upgrades" }), makeHistory());
     apiSpy = vi.spyOn(provider as any, "api").mockResolvedValue([
       { id: 1, title: "Missing", monitored: true, hasFile: false },
       {
@@ -112,7 +117,7 @@ describe("RadarrProvider.getCandidates()", () => {
   });
 
   it("includes unmonitored movies when monitoredOnly: false", async () => {
-    provider = new RadarrProvider(makeConfig({ monitoredOnly: false }));
+    provider = new RadarrProvider(makeConfig({ monitoredOnly: false }), makeHistory());
     apiSpy = vi.spyOn(provider as any, "api").mockResolvedValue([
       { id: 1, title: "Monitored", monitored: true, hasFile: false },
       { id: 2, title: "Unmonitored", monitored: false, hasFile: false },

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { SonarrProvider } from "../../src/providers/sonarr.js";
 import type { InstanceConfig } from "../../src/types.js";
+import type { SearchHistoryStore } from "../../src/search-history.js";
 
 function makeConfig(overrides: Partial<InstanceConfig> = {}): InstanceConfig {
   return {
@@ -17,12 +18,16 @@ function makeConfig(overrides: Partial<InstanceConfig> = {}): InstanceConfig {
   };
 }
 
+function makeHistory(): SearchHistoryStore {
+  return { filterRecent: vi.fn(() => []), record: vi.fn(), save: vi.fn() };
+}
+
 describe("SonarrProvider.getCandidates()", () => {
   let provider: SonarrProvider;
   let apiSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    provider = new SonarrProvider(makeConfig());
+    provider = new SonarrProvider(makeConfig(), makeHistory());
     apiSpy = vi
       .spyOn(provider as any, "api")
       .mockResolvedValue({ page: 1, pageSize: 50, totalRecords: 0, records: [] });
@@ -54,7 +59,7 @@ describe("SonarrProvider.getCandidates()", () => {
   });
 
   it("returns upgrade episodes from cutoff endpoint", async () => {
-    provider = new SonarrProvider(makeConfig({ searchMode: "upgrades" }));
+    provider = new SonarrProvider(makeConfig({ searchMode: "upgrades" }), makeHistory());
     apiSpy = vi.spyOn(provider as any, "api").mockResolvedValue({
       page: 1,
       pageSize: 50,
@@ -96,7 +101,7 @@ describe("SonarrProvider.getCandidates()", () => {
       },
     ];
 
-    provider = new SonarrProvider(makeConfig({ searchMode: "missing" }));
+    provider = new SonarrProvider(makeConfig({ searchMode: "missing" }), makeHistory());
     apiSpy = vi
       .spyOn(provider as any, "api")
       .mockResolvedValueOnce({

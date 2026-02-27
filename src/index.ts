@@ -10,8 +10,7 @@ import type { InstanceConfig } from "./types.js";
 function createSearchHistory(
   config: InstanceConfig,
   dataDir: string
-): SearchHistoryStore | undefined {
-  if (config.searchFrequencyHours <= 0) return undefined;
+): SearchHistoryStore {
   return new JsonSearchHistoryStore(
     dataDir,
     config.name,

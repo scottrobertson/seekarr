@@ -44,7 +44,7 @@ describe("loadConfig", () => {
     expect(inst.monitoredOnly).toBe(true);
     expect(inst.limit).toBe(10);
     expect(inst.dryRun).toBe(false);
-    expect(inst.searchFrequencyHours).toBe(0);
+    expect(inst.searchFrequencyHours).toBe(1);
     expect(config.schedule.intervalMinutes).toBe(60);
   });
 

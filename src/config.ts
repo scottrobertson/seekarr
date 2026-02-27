@@ -7,7 +7,7 @@ const INSTANCE_DEFAULTS: Partial<InstanceConfig> = {
   monitoredOnly: true,
   limit: 10,
   dryRun: false,
-  searchFrequencyHours: 0,
+  searchFrequencyHours: 1,
 };
 
 export function loadConfig(path: string): Config {

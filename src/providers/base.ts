@@ -2,22 +2,13 @@ import type { InstanceConfig, SearchCandidate } from "../types.js";
 import type { SearchHistoryStore } from "../search-history.js";
 import { log, logError } from "../logger.js";
 
-function shuffle<T>(array: T[]): T[] {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
 export abstract class ArrProvider {
   protected config: InstanceConfig;
-  private searchHistory: SearchHistoryStore | null;
+  private searchHistory: SearchHistoryStore;
 
-  constructor(config: InstanceConfig, searchHistory?: SearchHistoryStore) {
+  constructor(config: InstanceConfig, searchHistory: SearchHistoryStore) {
     this.config = config;
-    this.searchHistory = searchHistory ?? null;
+    this.searchHistory = searchHistory;
   }
 
   protected get name(): string {
@@ -64,26 +55,24 @@ export abstract class ArrProvider {
 
     log(this.name, `Found ${candidates.length} candidates`);
 
-    if (this.searchHistory) {
-      const recentIds = this.searchHistory.filterRecent(
-        candidates.map((c) => c.id)
+    const recentIds = this.searchHistory.filterRecent(
+      candidates.map((c) => c.id)
+    );
+    const before = candidates.length;
+    candidates = candidates.filter((c) => !recentIds.includes(c.id));
+    const skipped = before - candidates.length;
+    if (skipped > 0) {
+      log(
+        this.name,
+        `Skipped ${skipped} recently searched (within ${this.config.searchFrequencyHours}h)`
       );
-      const before = candidates.length;
-      candidates = candidates.filter((c) => !recentIds.includes(c.id));
-      const skipped = before - candidates.length;
-      if (skipped > 0) {
-        log(
-          this.name,
-          `Skipped ${skipped} recently searched (within ${this.config.searchFrequencyHours}h)`
-        );
-      }
-      if (candidates.length === 0) {
-        log(this.name, "No candidates remaining after filtering");
-        return;
-      }
+    }
+    if (candidates.length === 0) {
+      log(this.name, "No candidates remaining after filtering");
+      return;
     }
 
-    const selected = shuffle(candidates).slice(0, this.config.limit);
+    const selected = candidates.slice(0, this.config.limit);
     const missing = selected.filter((c) => c.type === "missing");
     const upgrades = selected.filter((c) => c.type === "upgrade");
 
@@ -111,10 +100,8 @@ export abstract class ArrProvider {
       logError(this.name, `Search command failed: ${err}`);
     }
 
-    if (this.searchHistory) {
-      this.searchHistory.record(selected.map((c) => c.id));
-      this.searchHistory.save();
-    }
+    this.searchHistory.record(selected.map((c) => c.id));
+    this.searchHistory.save();
 
     log(this.name, "Run complete");
   }
