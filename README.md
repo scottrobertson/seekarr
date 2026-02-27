@@ -91,7 +91,7 @@ CONFIG_PATH=./config.yml DATA_PATH=./data npm run dev
 Each run, per instance:
 
 1. Fetches candidates from the API (missing items, quality upgrades, or both)
-2. Filters out recently searched items (if `searchFrequencyHours` is enabled)
+2. Filters out recently searched items
 3. Takes the first `limit` items
 4. Sends a search command for the selected items
 
