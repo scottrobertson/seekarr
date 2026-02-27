@@ -8,6 +8,7 @@ instances:
     searchLimit: 10             # max items to search per run
     rateLimitPerMinute: 5       # max search commands per minute
     dryRun: false               # log what would be searched without triggering searches
+    searchFrequencyHours: 0     # skip items searched within this many hours (0 = disabled)
 
   - name: "radarr-main"
     type: "radarr"

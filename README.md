@@ -21,9 +21,11 @@ services:
   upgradarr:
     image: ghcr.io/scottrobertson/upgradarr:latest
     volumes:
-      - ./upgradarr/config.yml:/config/config.yml:ro
+      - ./upgradarr:/app
     restart: unless-stopped
 ```
+
+Place your `config.yml` at `./upgradarr/config/config.yml`. Search history data will be stored in `./upgradarr/data/`.
 
 3. Start it:
 
@@ -44,6 +46,7 @@ instances:
     searchLimit: 10 # max items to search per run
     rateLimitPerMinute: 5 # max search commands per minute
     dryRun: false # log what would be searched without triggering searches
+    searchFrequencyHours: 24 # skip items searched within this many hours (0 = disabled)
 
   - name: "radarr-main"
     type: "radarr"
@@ -69,6 +72,7 @@ schedule:
 | `searchLimit`        | `10`     | Max items to search per run                          |
 | `rateLimitPerMinute` | `5`      | Max search commands sent per minute                  |
 | `dryRun`             | `false`  | Log what would be searched without triggering searches |
+| `searchFrequencyHours` | `0`   | Skip items searched within this many hours. `0` disables (searches every run). |
 | `intervalMinutes`    | `60`     | Minutes between runs. `0` runs once and exits.       |
 
 ## Running Without Docker
@@ -78,13 +82,13 @@ Requires Node.js 22+.
 ```bash
 npm install
 npm run build
-CONFIG_PATH=./config.yml npm start
+CONFIG_PATH=./config.yml DATA_PATH=./data npm start
 ```
 
 For development:
 
 ```bash
-CONFIG_PATH=./config.yml npm run dev
+CONFIG_PATH=./config.yml DATA_PATH=./data npm run dev
 ```
 
 ## How It Works
@@ -99,3 +103,7 @@ Each run, per instance:
 Shuffling matters. The APIs return items in a consistent order, so without it the same items would be searched every run. Randomizing ensures everything gets a chance over time.
 
 Errors on one instance don't affect others. If an instance is unreachable, Upgradarr logs the error and moves on to the next one.
+
+## Data Storage
+
+When `searchFrequencyHours` is enabled, Upgradarr stores search history as JSON files in the data directory (one file per instance). In Docker this is `/app/data/`, controlled by the `DATA_PATH` environment variable.

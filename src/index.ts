@@ -1,16 +1,34 @@
 import { loadConfig } from "./config.js";
 import { log, logError } from "./logger.js";
+import { JsonSearchHistoryStore } from "./search-history.js";
+import type { SearchHistoryStore } from "./search-history.js";
 import { SonarrProvider } from "./providers/sonarr.js";
 import { RadarrProvider } from "./providers/radarr.js";
 import type { ArrProvider } from "./providers/base.js";
 import type { InstanceConfig } from "./types.js";
 
-function createProvider(config: InstanceConfig): ArrProvider {
+function createSearchHistory(
+  config: InstanceConfig,
+  dataDir: string
+): SearchHistoryStore | undefined {
+  if (config.searchFrequencyHours <= 0) return undefined;
+  return new JsonSearchHistoryStore(
+    dataDir,
+    config.name,
+    config.searchFrequencyHours
+  );
+}
+
+function createProvider(
+  config: InstanceConfig,
+  dataDir: string
+): ArrProvider {
+  const history = createSearchHistory(config, dataDir);
   switch (config.type) {
     case "sonarr":
-      return new SonarrProvider(config);
+      return new SonarrProvider(config, history);
     case "radarr":
-      return new RadarrProvider(config);
+      return new RadarrProvider(config, history);
   }
 }
 
@@ -29,13 +47,16 @@ async function runAll(providers: ArrProvider[]): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const configPath = process.env.CONFIG_PATH ?? "/config/config.yml";
+  const configPath = process.env.CONFIG_PATH ?? "/app/config/config.yml";
+  const dataDir = process.env.DATA_PATH ?? "/app/data";
   log("main", `Loading config from ${configPath}`);
 
   const config = loadConfig(configPath);
   log("main", `Loaded ${config.instances.length} instance(s)`);
 
-  const providers = config.instances.map(createProvider);
+  const providers = config.instances.map((inst) =>
+    createProvider(inst, dataDir)
+  );
 
   if (config.schedule.intervalMinutes === 0) {
     log("main", "Running once (intervalMinutes = 0)");

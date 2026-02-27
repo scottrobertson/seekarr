@@ -8,6 +8,7 @@ const INSTANCE_DEFAULTS: Partial<InstanceConfig> = {
   searchLimit: 10,
   rateLimitPerMinute: 5,
   dryRun: false,
+  searchFrequencyHours: 0,
 };
 
 export function loadConfig(path: string): Config {

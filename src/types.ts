@@ -8,6 +8,7 @@ export interface InstanceConfig {
   searchLimit: number;
   rateLimitPerMinute: number;
   dryRun: boolean;
+  searchFrequencyHours: number;
 }
 
 export interface ScheduleConfig {

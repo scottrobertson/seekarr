@@ -3,5 +3,5 @@ services:
     build: .
     image: ghcr.io/scottrobertson/upgradarr:latest
     volumes:
-      - ./config.yml:/config/config.yml:ro
+      - ./upgradarr:/app
     restart: unless-stopped
