@@ -6,7 +6,6 @@ A lightweight tool that triggers manual searches in Sonarr and Radarr to find mi
 
 - Searches for missing episodes/movies and quality upgrades
 - Supports multiple Sonarr/Radarr instances
-- Rate limited to avoid hammering your indexers
 - Randomizes search order so different items get picked up across runs
 - Runs on a configurable schedule or once for external cron
 
@@ -43,8 +42,7 @@ instances:
     apiKey: "your-api-key"
     searchMode: "both" # "upgrades" | "missing" | "both"
     monitoredOnly: true # only search monitored items
-    searchLimit: 10 # max items to search per run
-    rateLimitPerMinute: 5 # max search commands per minute
+    limit: 10 # max items to search per run
     dryRun: false # log what would be searched without triggering searches
     searchFrequencyHours: 24 # skip items searched within this many hours (0 = disabled)
 
@@ -54,8 +52,7 @@ instances:
     apiKey: "your-api-key"
     searchMode: "both"
     monitoredOnly: true
-    searchLimit: 15
-    rateLimitPerMinute: 5
+    limit: 15
 
 schedule:
   intervalMinutes: 60 # 0 = run once and exit (for external cron)
@@ -69,8 +66,7 @@ schedule:
 | `apiKey`             | required | API key from Settings > General                      |
 | `searchMode`         | `both`   | What to search for: `missing`, `upgrades`, or `both` |
 | `monitoredOnly`      | `true`   | Only search monitored items                          |
-| `searchLimit`        | `10`     | Max items to search per run                          |
-| `rateLimitPerMinute` | `5`      | Max search commands sent per minute                  |
+| `limit`              | `10`     | Max items to search per run                          |
 | `dryRun`             | `false`  | Log what would be searched without triggering searches |
 | `searchFrequencyHours` | `0`   | Skip items searched within this many hours. `0` disables (searches every run). |
 | `intervalMinutes`    | `60`     | Minutes between runs. `0` runs once and exits.       |
@@ -97,8 +93,8 @@ Each run, per instance:
 
 1. Fetches candidates from the API (missing items, quality upgrades, or both)
 2. Shuffles the list randomly
-3. Takes the first `searchLimit` items
-4. Sends search commands in batches, respecting `rateLimitPerMinute`
+3. Takes the first `limit` items
+4. Sends a search command for the selected items
 
 Shuffling matters. The APIs return items in a consistent order, so without it the same items would be searched every run. Randomizing ensures everything gets a chance over time.
 

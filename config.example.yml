@@ -5,8 +5,7 @@ instances:
     apiKey: "your-api-key"
     searchMode: "both"          # "upgrades" | "missing" | "both"
     monitoredOnly: true         # only search monitored items
-    searchLimit: 10             # max items to search per run
-    rateLimitPerMinute: 5       # max search commands per minute
+    limit: 10                   # max items to search per run
     dryRun: false               # log what would be searched without triggering searches
     searchFrequencyHours: 0     # skip items searched within this many hours (0 = disabled)
 
@@ -16,8 +15,7 @@ instances:
     apiKey: "your-api-key"
     searchMode: "both"
     monitoredOnly: true
-    searchLimit: 15
-    rateLimitPerMinute: 5
+    limit: 15
 
 schedule:
   intervalMinutes: 60           # 0 = run once and exit (for external cron)

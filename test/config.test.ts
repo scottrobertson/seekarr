@@ -42,8 +42,7 @@ describe("loadConfig", () => {
     expect(inst.apiKey).toBe("abc123");
     expect(inst.searchMode).toBe("both");
     expect(inst.monitoredOnly).toBe(true);
-    expect(inst.searchLimit).toBe(10);
-    expect(inst.rateLimitPerMinute).toBe(5);
+    expect(inst.limit).toBe(10);
     expect(inst.dryRun).toBe(false);
     expect(inst.searchFrequencyHours).toBe(0);
     expect(config.schedule.intervalMinutes).toBe(60);

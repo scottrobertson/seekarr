@@ -1,5 +1,4 @@
 import type { InstanceConfig, SearchCandidate } from "../types.js";
-import { RateLimiter } from "../rate-limiter.js";
 import type { SearchHistoryStore } from "../search-history.js";
 import { log, logError } from "../logger.js";
 
@@ -14,12 +13,10 @@ function shuffle<T>(array: T[]): T[] {
 
 export abstract class ArrProvider {
   protected config: InstanceConfig;
-  private rateLimiter: RateLimiter;
   private searchHistory: SearchHistoryStore | null;
 
   constructor(config: InstanceConfig, searchHistory?: SearchHistoryStore) {
     this.config = config;
-    this.rateLimiter = new RateLimiter(config.rateLimitPerMinute);
     this.searchHistory = searchHistory ?? null;
   }
 
@@ -86,7 +83,7 @@ export abstract class ArrProvider {
       }
     }
 
-    const selected = shuffle(candidates).slice(0, this.config.searchLimit);
+    const selected = shuffle(candidates).slice(0, this.config.limit);
     const missing = selected.filter((c) => c.type === "missing");
     const upgrades = selected.filter((c) => c.type === "upgrade");
 
@@ -108,15 +105,10 @@ export abstract class ArrProvider {
       return;
     }
 
-    const batchSize = 5;
-    for (let i = 0; i < selected.length; i += batchSize) {
-      const batch = selected.slice(i, i + batchSize);
-      await this.rateLimiter.wait();
-      try {
-        await this.search(batch.map((c) => c.id));
-      } catch (err) {
-        logError(this.name, `Search command failed: ${err}`);
-      }
+    try {
+      await this.search(selected.map((c) => c.id));
+    } catch (err) {
+      logError(this.name, `Search command failed: ${err}`);
     }
 
     if (this.searchHistory) {

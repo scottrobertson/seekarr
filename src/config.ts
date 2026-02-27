@@ -5,8 +5,7 @@ import type { Config, InstanceConfig } from "./types.js";
 const INSTANCE_DEFAULTS: Partial<InstanceConfig> = {
   searchMode: "both",
   monitoredOnly: true,
-  searchLimit: 10,
-  rateLimitPerMinute: 5,
+  limit: 10,
   dryRun: false,
   searchFrequencyHours: 0,
 };

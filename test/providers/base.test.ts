@@ -11,8 +11,7 @@ function makeConfig(overrides: Partial<InstanceConfig> = {}): InstanceConfig {
     apiKey: "test-key",
     searchMode: "both",
     monitoredOnly: true,
-    searchLimit: 10,
-    rateLimitPerMinute: 60,
+    limit: 10,
     dryRun: false,
     searchFrequencyHours: 24,
     ...overrides,
@@ -64,8 +63,8 @@ describe("ArrProvider.run()", () => {
     expect(provider.searchCalls[0]).toContain(2);
   });
 
-  it("respects searchLimit (only searches up to the limit)", async () => {
-    provider = new TestProvider(makeConfig({ searchLimit: 2 }));
+  it("respects limit (only searches up to the limit)", async () => {
+    provider = new TestProvider(makeConfig({ limit: 2 }));
     vi.spyOn(Math, "random").mockReturnValue(0);
     provider.candidateResult = [
       { id: 1, title: "A", type: "missing" },

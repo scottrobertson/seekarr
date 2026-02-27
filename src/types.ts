@@ -5,8 +5,7 @@ export interface InstanceConfig {
   apiKey: string;
   searchMode: "upgrades" | "missing" | "both";
   monitoredOnly: boolean;
-  searchLimit: number;
-  rateLimitPerMinute: number;
+  limit: number;
   dryRun: boolean;
   searchFrequencyHours: number;
 }
