@@ -21,11 +21,11 @@ services:
   seekarr:
     image: ghcr.io/scottrobertson/seekarr:latest
     volumes:
-      - ./seekarr:/app
+      - ./seekarr:/seekarr
     restart: unless-stopped
 ```
 
-Place your `config.yml` at `./seekarr/config/config.yml`. Search history data will be stored in `./seekarr/data/`.
+Place your `config.yml` at `./seekarr/config.yml`. Search history data will be stored in `./seekarr/data/`.
 
 3. Start it:
 

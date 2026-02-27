@@ -14,7 +14,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/package-lock.json ./package-lock.json
 RUN npm prune --omit=dev
-ENV CONFIG_PATH=/app/config/config.yml
-ENV DATA_PATH=/app/data
+ENV CONFIG_PATH=/seekarr/config.yml
+ENV DATA_PATH=/seekarr/data
 USER node
 CMD ["node", "dist/index.js"]

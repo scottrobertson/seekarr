@@ -3,5 +3,5 @@ services:
     build: .
     image: ghcr.io/scottrobertson/seekarr:latest
     volumes:
-      - ./seekarr:/app
+      - ./seekarr:/seekarr
     restart: unless-stopped
