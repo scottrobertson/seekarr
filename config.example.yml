@@ -1,0 +1,22 @@
+instances:
+  - name: "sonarr-main"
+    type: "sonarr"
+    url: "http://sonarr:8989"
+    apiKey: "your-api-key"
+    searchMode: "both"          # "upgrades" | "missing" | "both"
+    monitoredOnly: true         # only search monitored items
+    searchLimit: 10             # max items to search per run
+    rateLimitPerMinute: 5       # max search commands per minute
+    dryRun: false               # log what would be searched without triggering searches
+
+  - name: "radarr-main"
+    type: "radarr"
+    url: "http://radarr:7878"
+    apiKey: "your-api-key"
+    searchMode: "both"
+    monitoredOnly: true
+    searchLimit: 15
+    rateLimitPerMinute: 5
+
+schedule:
+  intervalMinutes: 60           # 0 = run once and exit (for external cron)

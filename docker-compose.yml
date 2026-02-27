@@ -1,0 +1,7 @@
+services:
+  upgradarr:
+    build: .
+    image: ghcr.io/scottrobertson/upgradarr:latest
+    volumes:
+      - ./config.yml:/config/config.yml:ro
+    restart: unless-stopped
