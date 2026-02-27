@@ -9,11 +9,10 @@ RUN npm run build
 FROM node:22-alpine
 LABEL org.opencontainers.image.source="https://github.com/scottrobertson/seekarr"
 WORKDIR /app
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/package-lock.json ./package-lock.json
-RUN npm prune --omit=dev
+RUN npm ci --omit=dev
+COPY --from=build /app/dist ./dist
 ENV CONFIG_PATH=/seekarr/config.yml
 ENV DATA_PATH=/seekarr/data
 USER node
