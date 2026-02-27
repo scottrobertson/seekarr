@@ -4,3 +4,8 @@ dist
 .claude
 .tool-versions
 *.md
+config.yml
+config.example.yml
+data/
+docker-compose.yml
+test/
