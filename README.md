@@ -5,6 +5,7 @@ A lightweight tool that triggers manual searches in Sonarr and Radarr to find mi
 ## Features
 
 - Searches for missing episodes/movies, quality upgrades, or your entire library
+- Randomises candidate selection so every item gets a fair chance across runs
 - Supports multiple Sonarr/Radarr instances
 - Runs on a configurable schedule or once for external cron
 
@@ -100,7 +101,7 @@ Each run, per instance:
 
 1. Fetches candidates from the API based on the configured search mode
 2. Filters out recently searched items
-3. Takes the first `limit` items
+3. Randomly selects up to `limit` items from the remaining candidates
 4. Sends a search command for the selected items
 
 Errors on one instance don't affect others. If an instance is unreachable, Seekarr logs the error and moves on to the next one.
