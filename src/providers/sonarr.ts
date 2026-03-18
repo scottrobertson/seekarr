@@ -54,18 +54,15 @@ export class SonarrProvider extends ArrProvider {
 
   private async fetchAllEpisodes(): Promise<SearchCandidate[]> {
     const candidates: SearchCandidate[] = [];
-    const { limit } = this.config;
     const series = await this.api<SonarrSeries[]>("/api/v3/series");
 
     for (const s of series) {
-      if (candidates.length >= limit) break;
       if (this.config.monitoredOnly && !s.monitored) continue;
 
       const episodes = await this.api<SonarrEpisode[]>(
         `/api/v3/episode?seriesId=${s.id}`
       );
       for (const ep of episodes) {
-        if (candidates.length >= limit) break;
         if (this.config.monitoredOnly && !ep.monitored) continue;
 
         candidates.push({

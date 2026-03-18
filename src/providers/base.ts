@@ -64,32 +64,19 @@ export abstract class ArrProvider {
     }
 
     if (recentIds.length > 0) {
-      log(this.name, `Skipped ${recentIds.length} recently searched`);
+      log(this.name, `Skipped ${recentIds.length} recently searched, ${candidates.length} remaining`);
+    }
+
+    // Shuffle candidates so every item gets a fair chance of being searched
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
     }
 
     const selected = candidates.slice(0, this.config.limit);
-    const missing = selected.filter((c) => c.type === "missing");
-    const upgrades = selected.filter((c) => c.type === "upgrade");
-    const existing = selected.filter((c) => c.type === "existing");
-
-    const verb = this.config.dryRun ? "Would search" : "Searching";
-    if (missing.length > 0) {
-      log(this.name, `${prefix}${verb} ${missing.length} missing items`);
-      for (const item of missing) {
-        log(this.name, `${prefix}  [missing] ${item.title}`);
-      }
-    }
-    if (upgrades.length > 0) {
-      log(this.name, `${prefix}${verb} ${upgrades.length} upgrade items`);
-      for (const item of upgrades) {
-        log(this.name, `${prefix}  [upgrade] ${item.title}`);
-      }
-    }
-    if (existing.length > 0) {
-      log(this.name, `${prefix}${verb} ${existing.length} existing items`);
-      for (const item of existing) {
-        log(this.name, `${prefix}  [existing] ${item.title}`);
-      }
+    log(this.name, `Randomly selected ${selected.length} of ${candidates.length} candidates`);
+    for (const item of selected) {
+      log(this.name, `${prefix}  [${item.type}] ${item.title}`);
     }
 
     if (this.config.dryRun) {
