@@ -4,7 +4,7 @@ A lightweight tool that triggers manual searches in Sonarr and Radarr to find mi
 
 ## Features
 
-- Searches for missing episodes/movies and quality upgrades
+- Searches for missing episodes/movies, quality upgrades, or your entire library
 - Supports multiple Sonarr/Radarr instances
 - Runs on a configurable schedule or once for external cron
 
@@ -39,7 +39,7 @@ instances:
     type: "sonarr"
     url: "http://sonarr:8989"
     apiKey: "your-api-key"
-    searchMode: "both" # "upgrades" | "missing" | "both"
+    searchMode: "both" # "upgrades" | "missing" | "both" | "all"
     monitoredOnly: true # only search monitored items
     limit: 10 # max items to search per run
     dryRun: false # log what would be searched without triggering searches
@@ -63,12 +63,20 @@ schedule:
 | `type`               | required | `sonarr` or `radarr`                                 |
 | `url`                | required | Base URL of the instance                             |
 | `apiKey`             | required | API key from Settings > General                      |
-| `searchMode`         | `both`   | What to search for: `missing`, `upgrades`, or `both` |
+| `searchMode`         | `both`   | What to search for: `missing`, `upgrades`, `both`, or `all` |
 | `monitoredOnly`      | `true`   | Only search monitored items                          |
 | `limit`              | `10`     | Max items to search per run                          |
 | `dryRun`             | `false`  | Log what would be searched without triggering searches |
 | `searchFrequencyHours` | `1`   | Skip items searched within this many hours                                     |
 | `intervalMinutes`    | `60`     | Minutes between runs. `0` runs once and exits.       |
+
+### Search Modes
+
+- **`missing`** searches for episodes/movies that don't have a file yet.
+- **`upgrades`** searches for items where the quality cutoff has not been met.
+- **`both`** combines missing and upgrades.
+- **`all`** searches every episode/movie regardless of status. This is useful when you use custom formats with scores, as better releases may be available even when the quality cutoff has already been met. Sonarr and Radarr will only grab a new file if it scores higher than the existing one, so this is safe to run periodically.
+
 
 ## Running Without Docker
 
@@ -90,7 +98,7 @@ CONFIG_PATH=./config.yml DATA_PATH=./data npm run dev
 
 Each run, per instance:
 
-1. Fetches candidates from the API (missing items, quality upgrades, or both)
+1. Fetches candidates from the API based on the configured search mode
 2. Filters out recently searched items
 3. Takes the first `limit` items
 4. Sends a search command for the selected items
