@@ -48,23 +48,18 @@ export abstract class ArrProvider {
       return;
     }
 
-    if (candidates.length === 0) {
-      log(this.name, "No candidates found");
-      return;
-    }
+    const totalCandidates = candidates.length;
 
     const recentIds = this.searchHistory.filterRecent(
       candidates.map((c) => c.id)
     );
     candidates = candidates.filter((c) => !recentIds.includes(c.id));
 
-    if (candidates.length === 0) {
-      log(this.name, "No candidates remaining after filtering");
-      return;
-    }
+    log(this.name, `Found ${totalCandidates} candidates, ${recentIds.length} recently searched, ${candidates.length} eligible`);
 
-    if (recentIds.length > 0) {
-      log(this.name, `Skipped ${recentIds.length} recently searched, ${candidates.length} remaining`);
+    if (candidates.length === 0) {
+      log(this.name, "No candidates remaining");
+      return;
     }
 
     // Shuffle candidates so every item gets a fair chance of being searched
@@ -74,7 +69,7 @@ export abstract class ArrProvider {
     }
 
     const selected = candidates.slice(0, this.config.limit);
-    log(this.name, `Randomly selected ${selected.length} of ${candidates.length} candidates`);
+    log(this.name, `Randomly selected ${selected.length} of ${candidates.length} eligible candidates`);
     for (const item of selected) {
       log(this.name, `${prefix}  [${item.type}] ${item.title}`);
     }
