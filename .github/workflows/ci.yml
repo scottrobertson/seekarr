@@ -1,4 +1,4 @@
-name: Docker
+name: CI
 
 on:
   push:
@@ -12,7 +12,19 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  docker:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
