@@ -37,7 +37,7 @@ export function loadConfig(path: string): Config {
 
       if (
         inst.searchMode &&
-        !["upgrades", "missing", "both"].includes(inst.searchMode as string)
+        !["upgrades", "missing", "both", "all"].includes(inst.searchMode as string)
       ) {
         throw new Error(
           `Instance ${i} has invalid searchMode '${inst.searchMode}'`

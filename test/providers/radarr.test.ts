@@ -130,4 +130,33 @@ describe("RadarrProvider.getCandidates()", () => {
       { id: 2, title: "Unmonitored", type: "missing" },
     ]);
   });
+
+  it('returns all movies including existing when searchMode is "all"', async () => {
+    provider = new RadarrProvider(makeConfig({ searchMode: "all" }), makeHistory());
+    apiSpy = vi.spyOn(provider as any, "api").mockResolvedValue([
+      { id: 1, title: "Missing", monitored: true, hasFile: false },
+      {
+        id: 2,
+        title: "Cutoff Unmet",
+        monitored: true,
+        hasFile: true,
+        movieFile: { qualityCutoffNotMet: true },
+      },
+      {
+        id: 3,
+        title: "Already Good",
+        monitored: true,
+        hasFile: true,
+        movieFile: { qualityCutoffNotMet: false },
+      },
+    ]);
+
+    const candidates = await provider.getCandidates();
+
+    expect(candidates).toEqual([
+      { id: 1, title: "Missing", type: "missing" },
+      { id: 2, title: "Cutoff Unmet", type: "existing" },
+      { id: 3, title: "Already Good", type: "existing" },
+    ]);
+  });
 });

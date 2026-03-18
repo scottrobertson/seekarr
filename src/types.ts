@@ -3,7 +3,7 @@ export interface InstanceConfig {
   type: "sonarr" | "radarr";
   url: string;
   apiKey: string;
-  searchMode: "upgrades" | "missing" | "both";
+  searchMode: "upgrades" | "missing" | "both" | "all";
   monitoredOnly: boolean;
   limit: number;
   dryRun: boolean;
@@ -22,5 +22,5 @@ export interface Config {
 export interface SearchCandidate {
   id: number;
   title: string;
-  type: "missing" | "upgrade";
+  type: "missing" | "upgrade" | "existing";
 }

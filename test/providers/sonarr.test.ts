@@ -146,4 +146,28 @@ describe("SonarrProvider.getCandidates()", () => {
       type: "missing",
     });
   });
+
+  it('fetches all episodes when searchMode is "all"', async () => {
+    provider = new SonarrProvider(makeConfig({ searchMode: "all" }), makeHistory());
+    apiSpy = vi.spyOn(provider as any, "api")
+      // /api/v3/series
+      .mockResolvedValueOnce([
+        { id: 1, title: "Show A", monitored: true },
+      ])
+      // /api/v3/episode?seriesId=1
+      .mockResolvedValueOnce([
+        { id: 10, title: "Missing Ep", seasonNumber: 1, episodeNumber: 1, monitored: true, hasFile: false },
+        { id: 20, title: "Has File", seasonNumber: 1, episodeNumber: 2, monitored: true, hasFile: true },
+        { id: 30, title: "Also Has File", seasonNumber: 1, episodeNumber: 3, monitored: true, hasFile: true },
+      ]);
+
+    const candidates = await provider.getCandidates();
+
+    expect(candidates).toEqual([
+      { id: 10, title: "Show A - S01E01", type: "missing" },
+      { id: 20, title: "Show A - S01E02", type: "existing" },
+      { id: 30, title: "Show A - S01E03", type: "existing" },
+    ]);
+    expect(apiSpy).toHaveBeenCalledTimes(2);
+  });
 });

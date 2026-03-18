@@ -90,4 +90,12 @@ describe("loadConfig", () => {
     });
     expect(() => loadConfig(path)).toThrow("invalid searchMode 'everything'");
   });
+
+  it("accepts searchMode 'all'", () => {
+    const path = writeTmp("all-mode", {
+      instances: [{ ...validInstance, searchMode: "all" }],
+    });
+    const config = loadConfig(path);
+    expect(config.instances[0].searchMode).toBe("all");
+  });
 });

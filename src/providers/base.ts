@@ -38,7 +38,7 @@ export abstract class ArrProvider {
 
   async run(): Promise<void> {
     const prefix = this.config.dryRun ? "[DRY RUN] " : "";
-    log(this.name, `${prefix}Starting search (mode: ${this.config.searchMode})`);
+    log(this.name, `${prefix}Starting search (mode: ${this.config.searchMode}, limit: ${this.config.limit})`);
 
     let candidates: SearchCandidate[];
     try {
@@ -53,28 +53,24 @@ export abstract class ArrProvider {
       return;
     }
 
-    log(this.name, `Found ${candidates.length} candidates`);
-
     const recentIds = this.searchHistory.filterRecent(
       candidates.map((c) => c.id)
     );
-    const before = candidates.length;
     candidates = candidates.filter((c) => !recentIds.includes(c.id));
-    const skipped = before - candidates.length;
-    if (skipped > 0) {
-      log(
-        this.name,
-        `Skipped ${skipped} recently searched (within ${this.config.searchFrequencyHours}h)`
-      );
-    }
+
     if (candidates.length === 0) {
       log(this.name, "No candidates remaining after filtering");
       return;
     }
 
+    if (recentIds.length > 0) {
+      log(this.name, `Skipped ${recentIds.length} recently searched`);
+    }
+
     const selected = candidates.slice(0, this.config.limit);
     const missing = selected.filter((c) => c.type === "missing");
     const upgrades = selected.filter((c) => c.type === "upgrade");
+    const existing = selected.filter((c) => c.type === "existing");
 
     const verb = this.config.dryRun ? "Would search" : "Searching";
     if (missing.length > 0) {
@@ -87,6 +83,12 @@ export abstract class ArrProvider {
       log(this.name, `${prefix}${verb} ${upgrades.length} upgrade items`);
       for (const item of upgrades) {
         log(this.name, `${prefix}  [upgrade] ${item.title}`);
+      }
+    }
+    if (existing.length > 0) {
+      log(this.name, `${prefix}${verb} ${existing.length} existing items`);
+      for (const item of existing) {
+        log(this.name, `${prefix}  [existing] ${item.title}`);
       }
     }
 

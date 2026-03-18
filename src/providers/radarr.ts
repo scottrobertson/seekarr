@@ -20,6 +20,15 @@ export class RadarrProvider extends ArrProvider {
     for (const movie of movies) {
       if (monitoredOnly && !movie.monitored) continue;
 
+      if (searchMode === "all") {
+        candidates.push({
+          id: movie.id,
+          title: movie.title,
+          type: movie.hasFile ? "existing" : "missing",
+        });
+        continue;
+      }
+
       if (
         (searchMode === "missing" || searchMode === "both") &&
         !movie.hasFile

@@ -2,7 +2,9 @@ import { ArrProvider } from "./base.js";
 import type { SearchCandidate } from "../types.js";
 
 interface SonarrSeries {
+  id: number;
   title: string;
+  monitored: boolean;
 }
 
 interface SonarrEpisode {
@@ -11,6 +13,8 @@ interface SonarrEpisode {
   series?: SonarrSeries;
   seasonNumber: number;
   episodeNumber: number;
+  monitored: boolean;
+  hasFile: boolean;
 }
 
 interface SonarrPagedResponse {
@@ -48,9 +52,40 @@ export class SonarrProvider extends ArrProvider {
     return `${series} - S${String(ep.seasonNumber).padStart(2, "0")}E${String(ep.episodeNumber).padStart(2, "0")}`;
   }
 
+  private async fetchAllEpisodes(): Promise<SearchCandidate[]> {
+    const candidates: SearchCandidate[] = [];
+    const { limit } = this.config;
+    const series = await this.api<SonarrSeries[]>("/api/v3/series");
+
+    for (const s of series) {
+      if (candidates.length >= limit) break;
+      if (this.config.monitoredOnly && !s.monitored) continue;
+
+      const episodes = await this.api<SonarrEpisode[]>(
+        `/api/v3/episode?seriesId=${s.id}`
+      );
+      for (const ep of episodes) {
+        if (candidates.length >= limit) break;
+        if (this.config.monitoredOnly && !ep.monitored) continue;
+
+        candidates.push({
+          id: ep.id,
+          title: this.formatEpisode({ ...ep, series: s }),
+          type: ep.hasFile ? "existing" : "missing",
+        });
+      }
+    }
+
+    return candidates;
+  }
+
   async getCandidates(): Promise<SearchCandidate[]> {
     const candidates: SearchCandidate[] = [];
     const { searchMode } = this.config;
+
+    if (searchMode === "all") {
+      return this.fetchAllEpisodes();
+    }
 
     if (searchMode === "missing" || searchMode === "both") {
       const missing = await this.fetchAllPages("/api/v3/wanted/missing");
