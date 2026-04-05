@@ -53,6 +53,22 @@ jobs:
       - uses: docker/setup-buildx-action@v4
 
       - uses: docker/build-push-action@v7
+        id: build
+        with:
+          context: .
+          load: true
+          tags: seekarr:smoke-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test - verify container runs
+        run: |
+          output=$(docker run --rm seekarr:smoke-test 2>&1 || true)
+          echo "$output"
+          echo "$output" | grep -q "Loading config"
+          echo "Smoke test passed: container starts and loads entrypoint"
+
+      - uses: docker/build-push-action@v7
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
