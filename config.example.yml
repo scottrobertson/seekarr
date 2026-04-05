@@ -17,5 +17,13 @@ instances:
     monitoredOnly: true
     limit: 15
 
+  - name: "lidarr-main"
+    type: "lidarr"
+    url: "http://lidarr:8686"
+    apiKey: "your-api-key"
+    searchMode: "both"
+    monitoredOnly: true
+    limit: 10
+
 schedule:
   intervalMinutes: 60           # 0 = run once and exit (for external cron)

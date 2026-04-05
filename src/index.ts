@@ -4,6 +4,7 @@ import { JsonSearchHistoryStore } from "./search-history.js";
 import type { SearchHistoryStore } from "./search-history.js";
 import { SonarrProvider } from "./providers/sonarr.js";
 import { RadarrProvider } from "./providers/radarr.js";
+import { LidarrProvider } from "./providers/lidarr.js";
 import type { ArrProvider } from "./providers/base.js";
 import type { InstanceConfig } from "./types.js";
 
@@ -28,6 +29,8 @@ function createProvider(
       return new SonarrProvider(config, history);
     case "radarr":
       return new RadarrProvider(config, history);
+    case "lidarr":
+      return new LidarrProvider(config, history);
   }
 }
 

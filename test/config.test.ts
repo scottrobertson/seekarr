@@ -79,9 +79,9 @@ describe("loadConfig", () => {
 
   it("throws on invalid type", () => {
     const path = writeTmp("bad-type", {
-      instances: [{ ...validInstance, type: "lidarr" }],
+      instances: [{ ...validInstance, type: "readarr" }],
     });
-    expect(() => loadConfig(path)).toThrow("invalid type 'lidarr'");
+    expect(() => loadConfig(path)).toThrow("invalid type 'readarr'");
   });
 
   it("throws on invalid searchMode", () => {
