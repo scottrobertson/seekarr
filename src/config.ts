@@ -29,9 +29,9 @@ export function loadConfig(path: string): Config {
       if (!inst.url) throw new Error(`Instance ${i} missing 'url'`);
       if (!inst.apiKey) throw new Error(`Instance ${i} missing 'apiKey'`);
 
-      if (inst.type !== "sonarr" && inst.type !== "radarr") {
+      if (inst.type !== "sonarr" && inst.type !== "radarr" && inst.type !== "lidarr") {
         throw new Error(
-          `Instance ${i} has invalid type '${inst.type}', must be 'sonarr' or 'radarr'`
+          `Instance ${i} has invalid type '${inst.type}', must be 'sonarr', 'radarr', or 'lidarr'`
         );
       }
 

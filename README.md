@@ -1,12 +1,12 @@
 # Seekarr
 
-A lightweight tool that triggers manual searches in Sonarr and Radarr to find missing items and upgrade existing ones to better quality. No UI, just a script that runs on a schedule in Docker. Configured via YAML.
+A lightweight tool that triggers manual searches in Sonarr, Radarr, and Lidarr to find missing items and upgrade existing ones to better quality. No UI, just a script that runs on a schedule in Docker. Configured via YAML.
 
 ## Features
 
-- Searches for missing episodes/movies, quality upgrades, or your entire library
+- Searches for missing episodes/movies/albums, quality upgrades, or your entire library
 - Randomises candidate selection so every item gets a fair chance across runs
-- Supports multiple Sonarr/Radarr instances
+- Supports multiple Sonarr/Radarr/Lidarr instances
 - Runs on a configurable schedule or once for external cron
 
 ## Quick Start
@@ -54,6 +54,14 @@ instances:
     monitoredOnly: true
     limit: 15
 
+  - name: "lidarr-main"
+    type: "lidarr"
+    url: "http://lidarr:8686"
+    apiKey: "your-api-key"
+    searchMode: "both"
+    monitoredOnly: true
+    limit: 10
+
 schedule:
   intervalMinutes: 60 # 0 = run once and exit (for external cron)
 ```
@@ -61,7 +69,7 @@ schedule:
 | Option               | Default  | Description                                          |
 | -------------------- | -------- | ---------------------------------------------------- |
 | `name`               | required | Label used in logs                                   |
-| `type`               | required | `sonarr` or `radarr`                                 |
+| `type`               | required | `sonarr`, `radarr`, or `lidarr`                      |
 | `url`                | required | Base URL of the instance                             |
 | `apiKey`             | required | API key from Settings > General                      |
 | `searchMode`         | `both`   | What to search for: `missing`, `upgrades`, `both`, or `all` |
@@ -73,10 +81,10 @@ schedule:
 
 ### Search Modes
 
-- **`missing`** searches for episodes/movies that don't have a file yet.
+- **`missing`** searches for episodes/movies/albums that don't have a file yet.
 - **`upgrades`** searches for items where the quality cutoff has not been met.
 - **`both`** combines missing and upgrades.
-- **`all`** searches every episode/movie regardless of status. This is useful when you use custom formats with scores, as better releases may be available even when the quality cutoff has already been met. Sonarr and Radarr will only grab a new file if it scores higher than the existing one, so this is safe to run periodically.
+- **`all`** searches every episode/movie/album regardless of status. This is useful when you use custom formats with scores, as better releases may be available even when the quality cutoff has already been met. Sonarr, Radarr, and Lidarr will only grab a new file if it scores higher than the existing one, so this is safe to run periodically.
 
 
 ## Running Without Docker

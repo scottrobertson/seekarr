@@ -1,6 +1,6 @@
 export interface InstanceConfig {
   name: string;
-  type: "sonarr" | "radarr";
+  type: "sonarr" | "radarr" | "lidarr";
   url: string;
   apiKey: string;
   searchMode: "upgrades" | "missing" | "both" | "all";
