@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
@@ -33,16 +33,16 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
-      - uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+      - uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
         if: github.event_name != 'pull_request'
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6
+      - uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
         id: meta
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -52,9 +52,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
 
-      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+      - uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
 
-      - uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
+      - uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
         id: build
         with:
           context: .
@@ -70,7 +70,7 @@ jobs:
           echo "$output" | grep -q "Loading config"
           echo "Smoke test passed: container starts and loads entrypoint"
 
-      - uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
+      - uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
