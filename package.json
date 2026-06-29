@@ -11,13 +11,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "yaml": "^2.8.4"
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.2",
-    "tsx": "^4.19.0",
+    "@types/node": "^26.0.1",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.9"
   },
   "license": "MIT",
   "author": "Scott Robertson",
