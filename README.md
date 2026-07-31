@@ -22,9 +22,15 @@ services:
     volumes:
       - ./seekarr:/seekarr
     restart: unless-stopped
+    healthcheck:
+      test: pgrep node
+      interval: 5m00s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
 ```
 
-Place your `config.yml` at `./seekarr/config.yml`. Search history data will be stored in `./seekarr/data/`.
+Place your `config.yml` at `./seekarr/config.yml`. Search history data will be stored in `./seekarr/data/`. You have to set user owner and group as userID `1000`, execute if it is created under different user: `chown -R 1000:1000 ./seekarr`.
 
 3. Start it:
 
